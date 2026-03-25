@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Operations Hub</title>
+    <style>
+        :root {
+            --bg: #f4efe6;
+            --bg-accent: #e4dccd;
+            --surface: rgba(255, 250, 242, 0.88);
+            --surface-strong: #fffdf8;
+            --text: #1f2521;
+            --muted: #5f675f;
+            --line: rgba(75, 91, 79, 0.18);
+            --primary: #1f6b52;
+            --primary-strong: #144835;
+            --secondary: #d88d3e;
+            --danger: #a64532;
+            --shadow: 0 24px 80px rgba(60, 51, 38, 0.14);
+            --radius-lg: 28px;
+            --radius-md: 18px;
+            --radius-sm: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Georgia, "Times New Roman", serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(216, 141, 62, 0.18), transparent 28%),
+                radial-gradient(circle at right, rgba(31, 107, 82, 0.14), transparent 24%),
+                linear-gradient(160deg, var(--bg) 0%, #f7f4ee 55%, #efe8dc 100%);
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+            background-size: 36px 36px;
+            mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent 85%);
+        }
+
+        .shell {
+            width: min(1180px, calc(100% - 32px));
+            margin: 32px auto;
+            display: grid;
+            gap: 24px;
+        }
+
+        .hero,
+        .panel {
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.35fr 0.95fr;
+            overflow: hidden;
+        }
+
+        .hero-copy {
+            padding: 40px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(31, 107, 82, 0.08);
+            color: var(--primary-strong);
+            font-size: 0.78rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 18px 0 14px;
+            font-size: clamp(2.3rem, 4vw, 4.5rem);
+            line-height: 0.95;
+            letter-spacing: -0.05em;
+        }
+
+        .lead {
+            max-width: 54ch;
+            margin: 0;
+            color: var(--muted);
+            font-size: 1.03rem;
+            line-height: 1.7;
+        }
+
+        .stats {
+            margin-top: 28px;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .stat {
+            padding: 18px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.48);
+        }
+
+        .stat-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--muted);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .stat strong {
+            font-size: 1.8rem;
+        }
+
+        .hero-art {
+            padding: 32px;
+            background:
+                linear-gradient(180deg, rgba(31, 107, 82, 0.88), rgba(20, 72, 53, 0.94)),
+                linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent);
+            color: #f7f3eb;
+            display: grid;
+            align-content: space-between;
+            gap: 20px;
+        }
+
+        .hero-art-card {
+            padding: 18px;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .hero-art-card h2,
+        .hero-art-card p {
+            margin: 0;
+        }
+
+        .hero-art-card p {
+            margin-top: 8px;
+            line-height: 1.6;
+            color: rgba(247, 243, 235, 0.8);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 360px minmax(0, 1fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        .panel {
+            padding: 24px;
+        }
+
+        .panel.accent-panel {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel.accent-panel::after {
+            content: "";
+            position: absolute;
+            inset: auto -40px -70px auto;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(216, 141, 62, 0.18), transparent 68%);
+            pointer-events: none;
+        }
+
+        .panel h2,
+        .panel h3,
+        .panel p {
+            margin-top: 0;
+        }
+
+        .panel-title {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .panel-title p {
+            margin: 4px 0 0;
+            color: var(--muted);
+        }
+
+        form {
+            display: grid;
+            gap: 14px;
+        }
+
+        label {
+            display: grid;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        input,
+        button {
+            font: inherit;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--text);
+        }
+
+        input:focus {
+            outline: 2px solid rgba(31, 107, 82, 0.2);
+            border-color: rgba(31, 107, 82, 0.42);
+        }
+
+        .actions,
+        .toolbar,
+        .pagination {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        button {
+            border: 0;
+            border-radius: 999px;
+            padding: 12px 18px;
+            cursor: pointer;
+            transition: transform 0.18s ease, opacity 0.18s ease, background 0.18s ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .primary {
+            background: var(--primary);
+            color: #fffaf3;
+        }
+
+        .secondary {
+            background: rgba(31, 107, 82, 0.09);
+            color: var(--primary-strong);
+        }
+
+        .danger {
+            background: rgba(166, 69, 50, 0.1);
+            color: var(--danger);
+        }
+
+        .status {
+            min-height: 24px;
+            margin: 4px 0 0;
+            color: var(--muted);
+        }
+
+        .status.error {
+            color: var(--danger);
+        }
+
+        .status.success {
+            color: var(--primary);
+        }
+
+        .editor-shell {
+            display: grid;
+            gap: 14px;
+        }
+
+        .editor-header {
+            padding: 16px 18px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, rgba(31, 107, 82, 0.07), rgba(216, 141, 62, 0.08));
+        }
+
+        .editor-header strong,
+        .editor-header span {
+            display: block;
+        }
+
+        .editor-header span {
+            margin-top: 6px;
+            color: var(--muted);
+        }
+
+        .search-shell {
+            display: grid;
+            gap: 14px;
+            padding: 18px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.44);
+        }
+
+        .content-stack {
+            display: grid;
+            gap: 18px;
+        }
+
+        .toolbar {
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toolbar .meta {
+            color: var(--muted);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 15px 12px;
+            border-bottom: 1px solid var(--line);
+            vertical-align: top;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 0.8rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        tbody tr {
+            transition: background 0.16s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.46);
+        }
+
+        .customer-name {
+            font-weight: 700;
+            font-size: 1.03rem;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(216, 141, 62, 0.14);
+            color: #8b541f;
+            font-size: 0.86rem;
+        }
+
+        .orders {
+            display: grid;
+            gap: 12px;
+        }
+
+        .order-card,
+        .empty {
+            padding: 18px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            background: var(--surface-strong);
+        }
+
+        .customer-cell {
+            display: grid;
+            gap: 8px;
+        }
+
+        .order-card strong {
+            font-size: 1.05rem;
+        }
+
+        .order-meta {
+            margin-top: 8px;
+            color: var(--muted);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .pagination {
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 980px) {
+            .hero,
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-art {
+                min-height: 280px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .shell {
+                width: min(100% - 20px, 1180px);
+                margin: 20px auto;
+            }
+
+            .hero-copy,
+            .hero-art,
+            .panel {
+                padding: 20px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            th:nth-child(3),
+            td:nth-child(3),
+            th:nth-child(4),
+            td:nth-child(4) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<main class="shell">
+    <section class="hero">
+        <div class="hero-copy">
+            <span class="eyebrow">Frontend Employee Console</span>
+            <h1>Manage employees without touching the API manually.</h1>
+            <p class="lead">
+                This page is wired to your Spring Boot endpoints. Create employees, review the live list,
+                inspect linked orders, and delete records from one place.
+            </p>
+            <div class="stats">
+                <article class="stat">
+                    <span class="stat-label">Loaded Employees</span>
+                    <strong id="customerCount">0</strong>
+                </article>
+                <article class="stat">
+                    <span class="stat-label">Current Page</span>
+                    <strong id="pageCount">1</strong>
+                </article>
+                <article class="stat">
+                    <span class="stat-label">Editing Employee</span>
+                    <strong id="selectedCustomer">None</strong>
+                </article>
+            </div>
+        </div>
+        <aside class="hero-art">
+            <div class="hero-art-card">
+                <h2>Live workflow</h2>
+                <p>Create an employee on the left, then pick any row to load its order history instantly.</p>
+            </div>
+            <div class="hero-art-card">
+                <h2>Included actions</h2>
+                <p>List, create, refresh, inspect orders, and delete employees using the existing REST API.</p>
+            </div>
+        </aside>
+    </section>
+
+        <section class="grid">
+        <section class="panel accent-panel">
+            <div class="panel-title">
+                <div>
+                    <h2>Employee Names</h2>
+                    <p>Create a new record or update the selected one.</p>
+                </div>
+            </div>
+
+            <form id="customerForm">
+
+                <label for="customerName">
+                    CUSTOMERS
+                    <input id="customerName" name="name" type="text" maxlength="255" placeholder="Enter an employee name" required>
+                </label>
+                <div class="actions">
+                    <button class="primary" id="submitButton" type="submit">Create Employee</button>
+                    <button class="secondary" id="editButton" type="button" disabled>Load For Edit</button>
+                    <button class="secondary" id="resetButton" type="button">Clear</button>
+                </div>
+                <p id="formStatus" class="status" aria-live="polite"></p>
+            </form>
+            <section class="editor-shell">
+                <div class="editor-header">
+                    <strong id="editorTitle">Update panel inactive</strong>
+                    <span id="editorMeta">Pick an employee from the table, then load it here to update the name.</span>
+                </div>
+                <form id="updateForm">
+                    <label for="updateName">
+                        Update Employee Name
+                        <input id="updateName" name="updateName" type="text" maxlength="255" placeholder="Select an employee to edit" disabled required>
+                    </label>
+                    <div class="actions">
+                        <button class="primary" id="updateButton" type="submit" disabled>Save Update</button>
+                        <button class="secondary" id="cancelEditButton" type="button" disabled>Cancel Edit</button>
+                    </div>
+                    <p id="updateStatus" class="status" aria-live="polite"></p>
+                </form>
+            </section>
+            <section class="search-shell">
+                <div>
+                    <h3>Search By ID</h3>
+                    <p>Fetch a single employee directly from <code>/api/customers/{id}</code>.</p>
+                </div>
+                <form id="searchForm">
+                    <label for="searchCustomerId">
+                        Employee ID
+                        <input id="searchCustomerId" name="searchCustomerId" type="number" min="1" step="1" placeholder="Enter employee ID">
+                    </label>
+                    <div class="actions">
+                        <button class="secondary" id="searchButton" type="submit">Search Employee</button>
+                        <button class="secondary" id="clearSearchButton" type="button">Clear Search</button>
+                    </div>
+                    <p id="searchStatus" class="status" aria-live="polite"></p>
+                </form>
+            </section>
+        </section>
+
+        <section class="content-stack">
+            <section class="panel">
+                <div class="toolbar">
+                    <div>
+                        <h2>Employee Directory</h2>
+                        <p class="meta" id="tableMeta">Loading employees...</p>
+                    </div>
+                    <div class="actions">
+                        <button class="secondary" id="refreshButton" type="button">Refresh</button>
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody id="customerTableBody"></tbody>
+                    </table>
+                </div>
+                <div id="emptyState" class="empty hidden">No employees found yet. Create the first one from the form.</div>
+                <div class="pagination">
+                    <span id="paginationLabel" class="meta">Page 1</span>
+                    <div class="actions">
+                        <button class="secondary" id="prevButton" type="button">Previous</button>
+                        <button class="secondary" id="nextButton" type="button">Next</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-title">
+                    <div>
+                        <h3>Employee Orders</h3>
+                        <p id="ordersMeta">Choose an employee to load related orders.</p>
+                    </div>
+                    <span id="ordersBadge" class="chip">No selection</span>
+                </div>
+                <div id="ordersContainer" class="orders">
+                    <div class="empty">Order history will appear here after you select an employee.</div>
+                </div>
+            </section>
+        </section>
+    </section>
+</main>
+
+<script>
+    const API_BASE_URL = "http://localhost:8080";
+
+    const state = {
+        page: 0,
+        size: 6,
+        totalPages: 0,
+        totalElements: 0,
+        customers: [],
+        editingCustomer: null,
+        ordersCustomer: null
+    };
+
+    const elements = {
+        form: document.getElementById("customerForm"),
+        updateForm: document.getElementById("updateForm"),
+        searchForm: document.getElementById("searchForm"),
+        customerName: document.getElementById("customerName"),
+        updateName: document.getElementById("updateName"),
+        searchCustomerId: document.getElementById("searchCustomerId"),
+        submitButton: document.getElementById("submitButton"),
+        updateButton: document.getElementById("updateButton"),
+        editButton: document.getElementById("editButton"),
+        searchButton: document.getElementById("searchButton"),
+        resetButton: document.getElementById("resetButton"),
+        cancelEditButton: document.getElementById("cancelEditButton"),
+        clearSearchButton: document.getElementById("clearSearchButton"),
+        refreshButton: document.getElementById("refreshButton"),
+        prevButton: document.getElementById("prevButton"),
+        nextButton: document.getElementById("nextButton"),
+        formStatus: document.getElementById("formStatus"),
+        updateStatus: document.getElementById("updateStatus"),
+        searchStatus: document.getElementById("searchStatus"),
+        customerTableBody: document.getElementById("customerTableBody"),
+        emptyState: document.getElementById("emptyState"),
+        tableMeta: document.getElementById("tableMeta"),
+        paginationLabel: document.getElementById("paginationLabel"),
+        customerCount: document.getElementById("customerCount"),
+        pageCount: document.getElementById("pageCount"),
+        selectedCustomer: document.getElementById("selectedCustomer"),
+        ordersContainer: document.getElementById("ordersContainer"),
+        ordersMeta: document.getElementById("ordersMeta"),
+        ordersBadge: document.getElementById("ordersBadge"),
+        editorTitle: document.getElementById("editorTitle"),
+        editorMeta: document.getElementById("editorMeta")
+    };
+
+    function setStatus(message, type = "") {
+        elements.formStatus.textContent = message;
+        elements.formStatus.className = type ? "status " + type : "status";
+    }
+
+    function setUpdateStatus(message, type = "") {
+        elements.updateStatus.textContent = message;
+        elements.updateStatus.className = type ? "status " + type : "status";
+    }
+
+    function setSearchStatus(message, type = "") {
+        elements.searchStatus.textContent = message;
+        elements.searchStatus.className = type ? "status " + type : "status";
+    }
+
+    async function request(url, options = {}) {
+        const resolvedUrl = url.startsWith("/api/") ? `${API_BASE_URL}${url}` : url;
+        const response = await fetch(resolvedUrl, {
+            headers: {
+                "Content-Type": "application/json",
+                ...(options.headers || {})
+            },
+            ...options
+        });
+
+        if (!response.ok) {
+            let message = "Request failed";
+            try {
+                const data = await response.json();
+                message = data.message || data.error || message;
+            } catch (error) {
+                const text = await response.text();
+                if (text) {
+                    message = text;
+                }
+            }
+            throw new Error(message);
+        }
+
+        if (response.status === 204) {
+            return null;
+        }
+
+        return response.json();
+    }
+
+    function renderCustomers() {
+        elements.customerTableBody.innerHTML = "";
+
+        if (!state.customers.length) {
+            elements.emptyState.classList.remove("hidden");
+        } else {
+            elements.emptyState.classList.add("hidden");
+        }
+
+        state.customers.forEach((customer) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>#${customer.id}</td>
+                <td>
+                    <div class="customer-cell">
+                        <div class="customer-name">${escapeHtml(customer.name)}</div>
+                        <span class="meta">Customer record</span>
+                    </div>
+                </td>
+                <td><span class="chip">${isEditingCustomer(customer.id) ? "Editing" : "Active"}</span></td>
+                <td>
+                    <div class="actions">
+                        <button class="secondary" type="button" data-action="edit" data-id="${customer.id}" data-name="${escapeHtml(customer.name)}">Edit</button>
+                        <button class="secondary" type="button" data-action="orders" data-id="${customer.id}" data-name="${escapeHtml(customer.name)}">View Orders</button>
+                        <button class="danger" type="button" data-action="delete" data-id="${customer.id}" data-name="${escapeHtml(customer.name)}">Delete</button>
+                    </div>
+                </td>
+            `;
+            elements.customerTableBody.appendChild(row);
+        });
+
+        const pageLabel = state.totalPages === 0 ? 1 : state.page + 1;
+        elements.tableMeta.textContent = `${state.totalElements} customer${state.totalElements === 1 ? "" : "s"} total`;
+        elements.paginationLabel.textContent = `Page ${pageLabel} of ${Math.max(state.totalPages, 1)}`;
+        elements.customerCount.textContent = String(state.totalElements);
+        elements.pageCount.textContent = String(pageLabel);
+        elements.prevButton.disabled = state.page === 0;
+        elements.nextButton.disabled = state.totalPages === 0 || state.page >= state.totalPages - 1;
+    }
+
+    function renderOrders(orders, customerName) {
+        elements.ordersContainer.innerHTML = "";
+        elements.ordersMeta.textContent = `Showing order history for ${customerName}.`;
+        elements.ordersBadge.textContent = customerName;
+
+        if (!orders.length) {
+            elements.ordersContainer.innerHTML = `<div class="empty">${customerName} has no orders yet.</div>`;
+            return;
+        }
+
+        orders.forEach((order) => {
+            const card = document.createElement("article");
+            card.className = "order-card";
+            card.innerHTML = `
+                <strong>Order #${order.id}</strong>
+                <div class="order-meta">
+                    <span>Date: ${order.orderDate || "N/A"}</span>
+                    <span>Total: ${formatCurrency(order.totalAmount)}</span>
+                    <span>Customer ID: ${order.customerId}</span>
+                </div>
+            `;
+            elements.ordersContainer.appendChild(card);
+        });
+    }
+
+    function resetOrders(message = "Order history will appear here after you select a customer.") {
+        state.ordersCustomer = null;
+        elements.ordersMeta.textContent = "Choose a customer to load related orders.";
+        elements.ordersBadge.textContent = "No selection";
+        elements.ordersContainer.innerHTML = `<div class="empty">${message}</div>`;
+    }
+
+    function escapeHtml(value) {
+        return value
+            .replaceAll("&", "&amp;")
+            .replaceAll("\"", "&quot;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;");
+    }
+
+    function formatCurrency(value) {
+        const amount = Number(value);
+        if (Number.isNaN(amount)) {
+            return value ?? "N/A";
+        }
+
+        return new Intl.NumberFormat(undefined, {
+            style: "currency",
+            currency: "USD"
+        }).format(amount);
+    }
+
+    function isEditingCustomer(customerId) {
+        return state.editingCustomer && state.editingCustomer.id === customerId;
+    }
+
+    function enableEditing(customer) {
+        state.editingCustomer = customer;
+        elements.updateName.disabled = false;
+        elements.updateButton.disabled = false;
+        elements.cancelEditButton.disabled = false;
+        elements.editButton.disabled = false;
+        elements.updateName.value = customer.name;
+        elements.editorTitle.textContent = `Editing customer #${customer.id}`;
+        elements.editorMeta.textContent = `You are updating ${customer.name}. Submitting this form sends PUT /api/customers/${customer.id}.`;
+        elements.selectedCustomer.textContent = customer.name;
+        renderCustomers();
+    }
+
+    function disableEditing(message = "Pick a customer from the table, then load it here to update the name.") {
+        state.editingCustomer = null;
+        elements.updateForm.reset();
+        elements.updateName.disabled = true;
+        elements.updateButton.disabled = true;
+        elements.cancelEditButton.disabled = true;
+        elements.editButton.disabled = true;
+        elements.editorTitle.textContent = "Update panel inactive";
+        elements.editorMeta.textContent = message;
+        elements.selectedCustomer.textContent = "None";
+        renderCustomers();
+    }
+
+    async function loadCustomers() {
+        elements.tableMeta.textContent = "Loading customers...";
+        const data = await request(`/api/customers?page=${state.page}&size=${state.size}`);
+        state.customers = data.content || [];
+        state.totalPages = data.totalPages || 0;
+        state.totalElements = data.totalElements || 0;
+
+        if (state.page > 0 && state.totalPages > 0 && state.page >= state.totalPages) {
+            state.page = state.totalPages - 1;
+            return loadCustomers();
+        }
+
+        renderCustomers();
+    }
+
+    async function loadOrders(customerId, customerName) {
+        elements.ordersMeta.textContent = `Loading orders for ${customerName}...`;
+        elements.ordersBadge.textContent = "Loading...";
+        state.ordersCustomer = { id: customerId, name: customerName };
+
+        try {
+            const data = await request(`/api/customers/${customerId}/orders?page=0&size=10`);
+            renderOrders(data.content || [], customerName);
+        } catch (error) {
+            resetOrders(`Could not load orders. ${error.message}`);
+        }
+    }
+
+    async function handleCreateCustomer(event) {
+        event.preventDefault();
+        const name = elements.customerName.value.trim();
+        if (!name) {
+            setStatus("Customer name is required.", "error");
+            return;
+        }
+
+        elements.submitButton.disabled = true;
+        setStatus("Creating customer...");
+
+        try {
+            const created = await request("/api/customers", {
+                method: "POST",
+                body: JSON.stringify({ name })
+            });
+
+            elements.form.reset();
+            setStatus(`Created customer #${created.id}.`, "success");
+            state.page = 0;
+            await loadCustomers();
+        } catch (error) {
+            setStatus(error.message, "error");
+        } finally {
+            elements.submitButton.disabled = false;
+        }
+    }
+
+    async function handleUpdateCustomer(event) {
+        event.preventDefault();
+        if (!state.editingCustomer) {
+            setUpdateStatus("Select a customer to update.", "error");
+            return;
+        }
+
+        const name = elements.updateName.value.trim();
+        if (!name) {
+            setUpdateStatus("Updated name is required.", "error");
+            return;
+        }
+
+        elements.updateButton.disabled = true;
+        setUpdateStatus(`Updating customer #${state.editingCustomer.id}...`);
+
+        try {
+            const updated = await request(`/api/customers/${state.editingCustomer.id}`, {
+                method: "PUT",
+                body: JSON.stringify({ name })
+            });
+
+            setUpdateStatus(`Updated customer #${updated.id}.`, "success");
+            await loadCustomers();
+            enableEditing(updated);
+        } catch (error) {
+            setUpdateStatus(error.message, "error");
+            elements.updateButton.disabled = false;
+        }
+    }
+
+    async function handleDeleteCustomer(customerId, customerName) {
+        const confirmed = window.confirm(`Delete ${customerName}?`);
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            await request(`/api/customers/${customerId}`, { method: "DELETE" });
+            setStatus(`Deleted ${customerName}.`, "success");
+
+            if (state.editingCustomer && state.editingCustomer.id === customerId) {
+                disableEditing("Selected customer was deleted. Pick another row to edit.");
+            }
+
+            if (state.ordersCustomer && state.ordersCustomer.id === customerId) {
+                resetOrders("Selected customer was deleted.");
+            }
+
+            await loadCustomers();
+        } catch (error) {
+            setStatus(`Delete failed: ${error.message}`, "error");
+        }
+    }
+
+    async function handleSearchCustomer(event) {
+        event.preventDefault();
+        const rawId = elements.searchCustomerId.value.trim();
+        const customerId = Number(rawId);
+
+        if (!rawId || !Number.isInteger(customerId) || customerId < 1) {
+            setSearchStatus("Enter a valid customer ID greater than 0.", "error");
+            return;
+        }
+
+        elements.searchButton.disabled = true;
+        setSearchStatus(`Searching for customer #${customerId}...`);
+
+        try {
+            const customer = await request(`/api/customers/${customerId}`);
+            state.customers = [customer];
+            state.page = 0;
+            state.totalPages = 1;
+            state.totalElements = 1;
+            renderCustomers();
+            enableEditing(customer);
+            setSearchStatus(`Customer #${customer.id} loaded.`, "success");
+            setStatus("");
+        } catch (error) {
+            state.customers = [];
+            state.page = 0;
+            state.totalPages = 0;
+            state.totalElements = 0;
+            renderCustomers();
+            disableEditing("No editable customer loaded. Search again or pick one from the table after refresh.");
+            resetOrders("Search did not return a customer.");
+            setSearchStatus(error.message, "error");
+        } finally {
+            elements.searchButton.disabled = false;
+        }
+    }
+
+    elements.form.addEventListener("submit", handleCreateCustomer);
+    elements.updateForm.addEventListener("submit", handleUpdateCustomer);
+    elements.searchForm.addEventListener("submit", handleSearchCustomer);
+
+    elements.resetButton.addEventListener("click", () => {
+        elements.form.reset();
+        setStatus("");
+    });
+
+    elements.clearSearchButton.addEventListener("click", async () => {
+        elements.searchForm.reset();
+        setSearchStatus("");
+        await loadCustomers();
+    });
+
+    elements.editButton.addEventListener("click", () => {
+        if (!state.editingCustomer) {
+            setUpdateStatus("Choose a customer first.", "error");
+            return;
+        }
+
+        enableEditing(state.editingCustomer);
+        setUpdateStatus("Selected customer loaded into the update form.", "success");
+    });
+
+    elements.cancelEditButton.addEventListener("click", () => {
+        disableEditing();
+        setUpdateStatus("");
+    });
+
+    elements.refreshButton.addEventListener("click", async () => {
+        setStatus("");
+        await loadCustomers();
+    });
+
+    elements.prevButton.addEventListener("click", async () => {
+        if (state.page === 0) {
+            return;
+        }
+        state.page -= 1;
+        await loadCustomers();
+    });
+
+    elements.nextButton.addEventListener("click", async () => {
+        if (state.totalPages === 0 || state.page >= state.totalPages - 1) {
+            return;
+        }
+        state.page += 1;
+        await loadCustomers();
+    });
+
+    elements.customerTableBody.addEventListener("click", async (event) => {
+        const button = event.target.closest("button");
+        if (!button) {
+            return;
+        }
+
+        const customerId = Number(button.dataset.id);
+        const customerName = button.dataset.name || "Customer";
+
+        if (button.dataset.action === "edit") {
+            enableEditing({ id: customerId, name: customerName });
+            setUpdateStatus("Customer loaded. Update the name and save.", "success");
+            return;
+        }
+
+        if (button.dataset.action === "orders") {
+            await loadOrders(customerId, customerName);
+        }
+
+        if (button.dataset.action === "delete") {
+            await handleDeleteCustomer(customerId, customerName);
+        }
+    });
+
+    (async function init() {
+        resetOrders();
+        disableEditing();
+        try {
+            await loadCustomers();
+        } catch (error) {
+            elements.tableMeta.textContent = `Could not load customers. ${error.message}`;
+            setStatus(`Initial load failed: ${error.message}`, "error");
+        }
+    })();
+</script>
+</body>
+</html>
